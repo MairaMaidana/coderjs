@@ -1,26 +1,46 @@
+class Prestamo {
+  constructor(monto, cuotas, porcentaje) {
+    this.monto = monto;
+    this.cuotas = cuotas;
+    this.porcentaje = porcentaje;
+  }
 
-function cotizarPrestamo(monto, plazo, tasaInteres) {
-  // Calcular el monto total a pagar
-  var montoTotal = monto + (monto * tasaInteres * plazo);
+  calcularInteres() {
+    return (this.monto * this.porcentaje) / 100;
+  }
 
-  // Calcular la cuota mensual
-  var cuotaMensual = montoTotal / plazo;
+  calcularTotal() {
+    const interes = this.calcularInteres();
+    return this.monto + interes;
+  }
 
-  // Retornar un objeto con los resultados
-  return {
-    montoTotal: montoTotal,
-    cuotaMensual: cuotaMensual
-  };
+  calcularCuotaMensual() {
+    const total = this.calcularTotal();
+    return total / this.cuotas;
+  }
 }
 
-// Ejemplo de uso
-var montoPrestamo = 10000; // Monto del préstamo
-var plazoPrestamo = 12; // Plazo en meses
-var tasaInteresAnual = 0.10; // Tasa de interés anual (10%)
+function cotizarPrestamos() {
+  const monto = parseFloat(prompt("Ingrese el monto del préstamo:"));
+  const cuotas = parseInt(prompt("Ingrese la cantidad de cuotas:"));
+  const porcentaje = parseFloat(prompt("Ingrese el porcentaje de interés:"));
 
-// Llamar a la función de cotización de préstamo
-var resultadoCotizacion = cotizarPrestamo(montoPrestamo, plazoPrestamo, tasaInteresAnual);
+  const prestamos = [];
+  const tasasInteres = [10, 15, 20];
+  for (const tasa of tasasInteres) {
+    const prestamo = new Prestamo(monto, cuotas, tasa);
+    prestamos.push(prestamo);
+  }
 
-//Mostrar los resultados
-console.log("Monto total a pagar: $" + resultadoCotizacion.montoTotal.toFixed(2));
-console.log("Cuota mensual: $" + resultadoCotizacion.cuotaMensual.toFixed(2));
+  prestamos.sort((a, b) => a.calcularInteres() - b.calcularInteres());
+
+  console.log("Opciones de préstamo sugeridas:");
+  for (const prestamo of prestamos) {
+    console.log(`Tasa de interés: ${prestamo.porcentaje}%`);
+    console.log(`Cuota mensual: $${prestamo.calcularCuotaMensual().toFixed(2)}`);
+   
+  }
+}
+
+cotizarPrestamos();
+
