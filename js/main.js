@@ -1,46 +1,42 @@
-class Prestamo {
-  constructor(monto, cuotas, porcentaje) {
-    this.monto = monto;
-    this.cuotas = cuotas;
-    this.porcentaje = porcentaje;
-  }
 
-  calcularInteres() {
-    return (this.monto * this.porcentaje) / 100;
-  }
+// Datos de préstamo
+var loanData = {
+  loanAmount: 0,
+  interestRate: 0,
+  loanTerm: 0
+};
 
-  calcularTotal() {
-    const interes = this.calcularInteres();
-    return this.monto + interes;
-  }
+// Función para calcular el préstamo
+function calculateLoan() {
+  loanData.loanAmount = parseFloat($('#loan-amount').val());
+  loanData.interestRate = parseFloat($('#interest-rate').val());
+  loanData.loanTerm = parseInt($('#loan-term').val());
 
-  calcularCuotaMensual() {
-    const total = this.calcularTotal();
-    return total / this.cuotas;
-  }
+  fetch('data.json')
+      .then(function(response) {
+          return response.json();
+      })
+      .then(function(data) {
+          var monthlyInterestRate = loanData.interestRate / (12 * 100);
+          var monthlyPayment = (loanData.loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanData.loanTerm));
+
+          var totalPayment = monthlyPayment * loanData.loanTerm;
+          var totalInterest = totalPayment - loanData.loanAmount;
+
+          var result = $('#result');
+          result.html('Pago mensual: $' + monthlyPayment.toFixed(2) +
+              '<br>Total del préstamo: $' + totalPayment.toFixed(2) +
+              '<br>Intereses totales: $' + totalInterest.toFixed(2));
+
+          data.monthlyPayment = monthlyPayment.toFixed(2);
+          data.totalPayment = totalPayment.toFixed(2);
+          data.totalInterest = totalInterest.toFixed(2);
+
+          saveDataToLocalJSON(data);
+      })
+      .catch(function(error) {
+          console.log('Error:', error);
+      });
 }
 
-function cotizarPrestamos() {
-  const monto = parseFloat(prompt("Ingrese el monto del préstamo:"));
-  const cuotas = parseInt(prompt("Ingrese la cantidad de cuotas:"));
-  const porcentaje = parseFloat(prompt("Ingrese el porcentaje de interés:"));
-
-  const prestamos = [];
-  const tasasInteres = [10, 15, 20];
-  for (const tasa of tasasInteres) {
-    const prestamo = new Prestamo(monto, cuotas, tasa);
-    prestamos.push(prestamo);
-  }
-
-  prestamos.sort((a, b) => a.calcularInteres() - b.calcularInteres());
-
-  console.log("Opciones de préstamo sugeridas:");
-  for (const prestamo of prestamos) {
-    console.log(`Tasa de interés: ${prestamo.porcentaje}%`);
-    console.log(`Cuota mensual: $${prestamo.calcularCuotaMensual().toFixed(2)}`);
-   
-  }
-}
-
-cotizarPrestamos();
 
