@@ -1,6 +1,6 @@
 
 // Datos de préstamo
-var loanData = {
+let loanData = {
   loanAmount: 0,
   interestRate: 0,
   loanTerm: 0
@@ -17,13 +17,13 @@ function calculateLoan() {
           return response.json();
       })
       .then(function(data) {
-          var monthlyInterestRate = loanData.interestRate / (12 * 100);
-          var monthlyPayment = (loanData.loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanData.loanTerm));
+          let monthlyInterestRate = loanData.interestRate / (12 * 100);
+          let monthlyPayment = (loanData.loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanData.loanTerm));
 
-          var totalPayment = monthlyPayment * loanData.loanTerm;
-          var totalInterest = totalPayment - loanData.loanAmount;
+          let totalPayment = monthlyPayment * loanData.loanTerm;
+          let totalInterest = totalPayment - loanData.loanAmount;
 
-          var result = $('#result');
+          let result = $('#result');
           result.html('Pago mensual: $' + monthlyPayment.toFixed(2) +
               '<br>Total del préstamo: $' + totalPayment.toFixed(2) +
               '<br>Intereses totales: $' + totalInterest.toFixed(2));
